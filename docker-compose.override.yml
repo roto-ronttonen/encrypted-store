@@ -21,7 +21,7 @@ services:
       - ./apps/web:/app
     expose:
       - 3000
-    command: ["npm", "run", "dev"]
+    command: ["npm", "run", "start"]
 
   reverse-proxy:
     image: nginx
