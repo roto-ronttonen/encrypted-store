@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  api:
+    restart: always
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/api:/go/src/app
+    expose:
+      - 80
+    command: ["air"]
+
+  web:
+    restart: always
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./apps/web:/app
+    expose:
+      - 80
+    command: ["npm", "run", "dev"]
+
+  reverse-proxy:
+    image: nginx
+    depends_on:
+      - api
+      - web
+    restart: always
+    volumes:
+      - ./nginx/prod.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/ssl/certs
+    ports:
+      - 443:443
