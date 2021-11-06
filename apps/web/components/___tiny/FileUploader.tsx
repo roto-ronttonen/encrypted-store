@@ -38,11 +38,18 @@ export default function FileUploader({
     <div
       {...getRootProps({
         ...root,
-        className: clsx("cursor-pointer w-64 h-64", root?.className),
+        className: clsx(
+          "cursor-pointer w-64 border border-dashed border-gray-300 rounded",
+          root?.className
+        ),
       })}
     >
       <input {...getInputProps(input)} />
-      {isDragActive ? <p>{dragActiveText}</p> : <p>{defaultText}</p>}
+      <div className="flex items-center justify-center w-full h-full p-6">
+        <p className="text-center">
+          {isDragActive ? dragActiveText : defaultText}
+        </p>
+      </div>
     </div>
   );
 }

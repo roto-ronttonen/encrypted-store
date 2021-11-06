@@ -1,4 +1,6 @@
+import { useRouter } from "next/router";
 import React, { useState, useContext } from "react";
+import { useEffect } from "react";
 import { digestMessage, rawToCryptoKey } from "../../utils/crypto";
 
 type KeyContextValue = {
@@ -8,6 +10,7 @@ type KeyContextValue = {
   setKey: (key: string) => Promise<void>;
   creatingKey: boolean;
   clearKey: () => void;
+  loggedIn: boolean;
 };
 
 const KeyContext = React.createContext<KeyContextValue>(null as any);
@@ -58,9 +61,19 @@ export function KeyProvider({ children }: KeyProvideProps) {
     }
   };
 
+  const loggedIn = !!key && !!keyHashHex;
+
   return (
     <KeyContext.Provider
-      value={{ key, keyHashHex, generateKey, creatingKey, setKey, clearKey }}
+      value={{
+        key,
+        keyHashHex,
+        generateKey,
+        creatingKey,
+        setKey,
+        clearKey,
+        loggedIn,
+      }}
     >
       {children}
     </KeyContext.Provider>
@@ -69,4 +82,18 @@ export function KeyProvider({ children }: KeyProvideProps) {
 
 export function useKey() {
   return useContext(KeyContext);
+}
+
+export function useRequireLogin() {
+  const { loggedIn } = useKey();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (process.browser) {
+      if (!loggedIn) {
+        router.push("/");
+      }
+    }
+  });
 }
