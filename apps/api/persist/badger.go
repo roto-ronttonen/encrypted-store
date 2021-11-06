@@ -26,6 +26,7 @@ func (f *FileStorage) Close() {
 }
 
 func (f *FileStorage) SaveFile(owner string, name string, data []byte) error {
+
 	err := f.db.Update(func(txn *badger.Txn) error {
 		err := txn.Set([]byte(owner+"/"+name), data)
 		return err
@@ -34,15 +35,16 @@ func (f *FileStorage) SaveFile(owner string, name string, data []byte) error {
 }
 
 func (f *FileStorage) GetFileNamesByOwner(owner string, take int, skip int) ([]string, error) {
-	names := make([]string, take)
+	names := make([]string, 0)
 	skipped := 0
 	took := 0
 	err := f.db.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
 		prefix := []byte(owner)
+
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
-			if skipped <= skip {
+			if skipped < skip {
 				skip++
 				continue
 			}
@@ -53,6 +55,7 @@ func (f *FileStorage) GetFileNamesByOwner(owner string, take int, skip int) ([]s
 			item := it.Item()
 			k := item.Key()
 			name := strings.Split(string(k), "/")[1]
+
 			names = append(names, name)
 			took++
 		}
@@ -80,11 +83,13 @@ func (f *FileStorage) GetFileByOwner(owner string, name string) ([]byte, error) 
 	err := f.db.View(func(txn *badger.Txn) error {
 		b := []byte(owner + "/" + name)
 		item, err := txn.Get(b)
+
 		if err != nil {
 			return err
 		}
 		err = item.Value(func(val []byte) error {
-			copy(value, val)
+
+			value = append([]byte{}, val...)
 			return nil
 		})
 		if err != nil {

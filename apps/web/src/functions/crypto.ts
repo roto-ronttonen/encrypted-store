@@ -38,5 +38,28 @@ export async function encryptData(
     secretKey,
     data
   );
-  return new Uint8Array(encryptedBuffer);
+  // Concat iv to data
+  const dataArr = new Uint8Array(encryptedBuffer);
+  const merged = new Uint8Array(iv.length + dataArr.length);
+  merged.set(iv);
+  merged.set(dataArr, iv.length);
+  console.log(merged, iv);
+  return merged;
+}
+
+export async function decryptData(data: ArrayBuffer, secretKey: CryptoKey) {
+  // Seperate iv and actual data
+  const merged = new Uint8Array(data);
+  const iv = merged.slice(0, 12);
+  const d = merged.filter((_, i) => i > 11);
+  console.log(merged, iv);
+  const decrypted = await window.crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv,
+    },
+    secretKey,
+    d
+  );
+  return decrypted;
 }

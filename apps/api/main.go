@@ -37,8 +37,9 @@ func main() {
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			user := r.Header.Get("Identifier")
-			// Sha256 hex should have 64 chars
-			if len(user) != 64 {
+
+			// Sha256 hex should have 128 chars
+			if len(user) != 128 {
 				sendHttpJsonError(errors.New("invalid identifier"), "invalid identifier", http.StatusForbidden, w)
 				return
 			}

@@ -9,6 +9,7 @@ import {
 } from "../components";
 import { bytesToString, fileToBytes } from "../functions/bytes";
 import { cryptoKeyToRaw } from "../functions/crypto";
+import { downloadText } from "../functions/html";
 import { useKey } from "../providers/KeyProvider";
 import { useShittyRouter } from "../providers/ShittyRouterProvider";
 
@@ -26,16 +27,7 @@ export default function LoginView() {
             if (rawKey) {
               // Download key for user
               const asTxt = JSON.stringify(rawKey);
-              const elem = document.createElement("a");
-              elem.setAttribute(
-                "href",
-                "data:text/plain;charset=utf-8," + asTxt
-              );
-              elem.setAttribute("download", "secret_key.txt");
-              elem.style.display = "none";
-              document.body.append(elem);
-              elem.click();
-              document.body.removeChild(elem);
+              downloadText(asTxt);
             }
           }
         }}

@@ -1,3 +1,3 @@
 package appconfig
 
-var BadgerDbDir string = "/app/badger"
+var BadgerDbDir string = "/go/src/app/data/badger"
