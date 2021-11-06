@@ -1,10 +1,11 @@
 import { nanoid } from "nanoid";
 import React, { useState, useContext } from "react";
+import { digestMessage, rawToCryptoKey } from "../functions/crypto";
 
 type KeyContextValue = {
-  key: string | null;
+  key: CryptoKey | null;
   keyHashHex: string | null;
-  generateKey: () => string | undefined;
+  generateKey: () => Promise<CryptoKey | undefined>;
   setKey: (key: string) => Promise<void>;
   creatingKey: boolean;
   clearKey: () => void;
@@ -18,25 +19,34 @@ export type KeyProvideProps = {
 
 export function KeyProvider({ children }: KeyProvideProps) {
   // Used as encryption secret key
-  const [key, _setKey] = useState<string | null>(null);
+  const [key, _setKey] = useState<CryptoKey | null>(null);
   const [keyHashHex, setKeyHashHex] = useState<string | null>(null);
 
   const [creatingKey, setCreatingKey] = useState(false);
 
-  const generateKey = () => {
+  const generateKey = async () => {
     if (!creatingKey) {
       setCreatingKey(true);
-      const k = nanoid(128);
+      const k = await window.crypto.subtle.generateKey(
+        {
+          name: "AES-GCM",
+          length: 256,
+        },
+        true,
+        ["encrypt", "decrypt"]
+      );
+
       setCreatingKey(false);
       return k;
     }
   };
 
-  const setKey = async (key: string) => {
-    if (!creatingKey && key.length >= 128) {
+  const setKey = async (rawKey: string) => {
+    if (!creatingKey) {
       setCreatingKey(true);
+      const key = await rawToCryptoKey(rawKey);
       _setKey(key);
-      const hex = await digestMessage(key);
+      const hex = await digestMessage(rawKey);
       setKeyHashHex(hex);
       setCreatingKey(false);
     }
@@ -60,14 +70,4 @@ export function KeyProvider({ children }: KeyProvideProps) {
 
 export function useKey() {
   return useContext(KeyContext);
-}
-
-async function digestMessage(message: string) {
-  const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
-  const hashBuffer = await crypto.subtle.digest("SHA-512", msgUint8); // hash the message
-  const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join(""); // convert bytes to hex string
-  return hashHex;
 }

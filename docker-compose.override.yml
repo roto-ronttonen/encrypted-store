@@ -8,8 +8,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./apps/api:/go/src/app
-    expose:
-      - 3000
     command: ["air"]
 
   web:
@@ -19,8 +17,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./apps/web:/app
-    expose:
-      - 3000
     command: ["npm", "run", "start"]
 
   reverse-proxy:
