@@ -20,48 +20,55 @@ const Home: NextPage = () => {
   const router = useRouter();
   return (
     <main className="h-screen w-screen flex items-center justify-center">
-      <Card>
-        <ContentContainer>
-          <Grid>
-            <GridColumn className="flex justify-center">
-              <Button
-                className="w-full"
-                onClick={async () => {
-                  const key = await generateKey();
-                  if (key) {
-                    const rawKey = await cryptoKeyToRaw(key);
-                    if (rawKey) {
-                      // Download key for user
-                      const asTxt = JSON.stringify(rawKey);
-                      downloadText(asTxt);
-                    }
-                  }
-                }}
-                type="button"
-                disabled={creatingKey}
-              >
-                {creatingKey ? <Loader /> : "Generate a secure key"}
-              </Button>
-            </GridColumn>
-            <GridColumn className="flex justify-center">
-              <p className="text-center">or</p>
-            </GridColumn>
-            <GridColumn className="flex justify-center">
-              <FileUploader
-                onDrop={async (files) => {
-                  const file = files[0];
-                  const b = await fileToBytes(file);
-                  const string = bytesToString(b);
-                  await setKey(string);
-                  router.push("files");
-                }}
-                defaultText="Upload your secret key"
-                dragActiveText="Drop your secret key here"
-              />
-            </GridColumn>
-          </Grid>
-        </ContentContainer>
-      </Card>
+      <Grid>
+        <GridColumn>
+          <h1 className="text-2xl">Login</h1>
+        </GridColumn>
+        <GridColumn>
+          <Card>
+            <ContentContainer>
+              <Grid>
+                <GridColumn className="flex justify-center">
+                  <Button
+                    className="w-full"
+                    onClick={async () => {
+                      const key = await generateKey();
+                      if (key) {
+                        const rawKey = await cryptoKeyToRaw(key);
+                        if (rawKey) {
+                          // Download key for user
+                          const asTxt = JSON.stringify(rawKey);
+                          downloadText(asTxt);
+                        }
+                      }
+                    }}
+                    type="button"
+                    disabled={creatingKey}
+                  >
+                    {creatingKey ? <Loader /> : "Generate a secure key"}
+                  </Button>
+                </GridColumn>
+                <GridColumn className="flex justify-center">
+                  <p className="text-center">or</p>
+                </GridColumn>
+                <GridColumn className="flex justify-center">
+                  <FileUploader
+                    onDrop={async (files) => {
+                      const file = files[0];
+                      const b = await fileToBytes(file);
+                      const string = bytesToString(b);
+                      await setKey(string);
+                      router.push("files");
+                    }}
+                    defaultText="Upload your secret key"
+                    dragActiveText="Drop your secret key here"
+                  />
+                </GridColumn>
+              </Grid>
+            </ContentContainer>
+          </Card>
+        </GridColumn>
+      </Grid>
     </main>
   );
 };

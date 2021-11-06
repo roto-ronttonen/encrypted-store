@@ -6,7 +6,7 @@ export default function Grid({ ...props }: GridProps) {
   return (
     <div
       {...props}
-      className={clsx("grid gap-5 grid-cols-12", props.className)}
+      className={clsx("grid gap-4 grid-cols-12", props.className)}
     />
   );
 }
