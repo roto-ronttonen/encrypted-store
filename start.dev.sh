@@ -1,1 +1,1 @@
-docker-compose up
+docker-compose -f docker-compose.override.yml up

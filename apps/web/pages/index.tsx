@@ -1,22 +1,15 @@
-import { useState } from "react";
-import {
-  Button,
-  FileUploader,
-  InputError,
-  Label,
-  Loader,
-  TextInput,
-} from "../components";
-import { bytesToString, fileToBytes } from "../functions/bytes";
-import { cryptoKeyToRaw } from "../functions/crypto";
-import { downloadText } from "../functions/html";
-import { useKey } from "../providers/KeyProvider";
-import { useShittyRouter } from "../providers/ShittyRouterProvider";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import React from "react";
+import { useKey } from "../components/providers/KeyProvider";
+import { Button, FileUploader, Loader } from "../components/___tiny";
+import { fileToBytes, bytesToString } from "../utils/bytes";
+import { cryptoKeyToRaw } from "../utils/crypto";
+import { downloadText } from "../utils/html";
 
-export default function LoginView() {
-  const { setCurrentView } = useShittyRouter();
+const Home: NextPage = () => {
   const { setKey, generateKey, creatingKey } = useKey();
-
+  const router = useRouter();
   return (
     <main>
       <Button
@@ -42,11 +35,13 @@ export default function LoginView() {
           const b = await fileToBytes(file);
           const string = bytesToString(b);
           await setKey(string);
-          setCurrentView("list-files");
+          router.push("files");
         }}
         defaultText="Drag and drop or click here to login with your secret key"
         dragActiveText="Drop your secret key here"
       />
     </main>
   );
-}
+};
+
+export default Home;

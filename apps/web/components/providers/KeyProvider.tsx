@@ -1,6 +1,5 @@
-import { nanoid } from "nanoid";
 import React, { useState, useContext } from "react";
-import { digestMessage, rawToCryptoKey } from "../functions/crypto";
+import { digestMessage, rawToCryptoKey } from "../../utils/crypto";
 
 type KeyContextValue = {
   key: CryptoKey | null;

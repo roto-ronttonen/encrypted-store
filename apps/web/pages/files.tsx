@@ -1,17 +1,17 @@
-import { useMemo } from "react";
-import { useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { Button, FileUploader } from "../components";
-import { fileToBytes } from "../functions/bytes";
-import { cryptoKeyToRaw, decryptData, encryptData } from "../functions/crypto";
-import { downloadBlob } from "../functions/html";
-import { useKey } from "../providers/KeyProvider";
-import { useShittyRouter } from "../providers/ShittyRouterProvider";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import React, { useState, useMemo } from "react";
+import { useQueryClient, useQuery } from "react-query";
+import { useKey } from "../components/providers/KeyProvider";
+import { Button, FileUploader } from "../components/___tiny";
+import { fileToBytes } from "../utils/bytes";
+import { decryptData, encryptData } from "../utils/crypto";
+import { downloadBlob } from "../utils/html";
 
-export default function ListFilesView() {
+const Files: NextPage = () => {
   const queryClient = useQueryClient();
   const { clearKey, key, keyHashHex } = useKey();
-  const { setCurrentView } = useShittyRouter();
+  const router = useRouter();
 
   const [page, setPage] = useState(0);
   const pageSize = 25;
@@ -35,11 +35,11 @@ export default function ListFilesView() {
   );
 
   return (
-    <div>
+    <main>
       <Button
         onClick={() => {
           clearKey();
-          setCurrentView("login");
+          router.push("/");
         }}
       >
         Logout
@@ -90,6 +90,8 @@ export default function ListFilesView() {
           queryClient.invalidateQueries("filenames");
         }}
       />
-    </div>
+    </main>
   );
-}
+};
+
+export default Files;

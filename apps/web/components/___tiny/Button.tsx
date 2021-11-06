@@ -6,7 +6,7 @@ export default function Button({ ...props }: ButtonProps) {
   return (
     <button
       {...props}
-      className={clsx("rounded p-4 bg-blue-500 text-white", props.className)}
+      className={clsx("rounded-lg p-2 bg-blue-500 text-white", props.className)}
     />
   );
 }
