@@ -2,22 +2,20 @@ version: "3.9"
 
 services:
   api:
+    image: encrypted-file-storage-api
     restart: always
-    build:
-      context: ./apps/api
-      dockerfile: Dockerfile
     volumes:
-      - ./data:/go/src/app/data
+      - ./data:/app/data
     expose:
       - 3000
+    command: ["/app/out"]
 
   web:
+    image: encrypted-file-storage-web
     restart: always
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
     expose:
       - 3000
+    command: ["npm", "run", "start"]
 
   reverse-proxy:
     image: nginx

@@ -9,7 +9,7 @@ services:
     expose:
       - 3000
     volumes:
-      - ./apps/api:/go/src/app
+      - ./apps/api:/app
     command: ["air"]
 
   web:

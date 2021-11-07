@@ -62,8 +62,8 @@ const Files: NextPage = () => {
         <div className="inline-flex">
           <FileUploader
             input={{ multiple: true }}
-            defaultText="Upload a file"
-            dragActiveText="Drop you file here"
+            defaultText="Upload files"
+            dragActiveText="Drop you files here"
             onDrop={async (files) => {
               if (!key || !keyHashHex) {
                 return;
