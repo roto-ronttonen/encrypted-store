@@ -39,7 +39,7 @@ export default function FileUploader({
       {...getRootProps({
         ...root,
         className: clsx(
-          "cursor-pointer w-64 border border-dashed border-gray-300 rounded",
+          "cursor-pointer border border-dashed border-gray-300 rounded",
           root?.className
         ),
       })}

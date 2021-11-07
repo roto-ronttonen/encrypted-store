@@ -45,7 +45,7 @@ func (f *FileStorage) GetFileNamesByOwner(owner string, take int, skip int) ([]s
 
 		for it.Seek(prefix); it.ValidForPrefix(prefix); it.Next() {
 			if skipped < skip {
-				skip++
+				skipped++
 				continue
 			}
 			if took >= take {

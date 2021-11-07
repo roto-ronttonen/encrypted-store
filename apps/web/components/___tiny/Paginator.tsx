@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useMemo } from "react";
 import { IoChevronBackSharp, IoChevronForwardSharp } from "react-icons/io5";
 export type PaginatorProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -25,45 +26,62 @@ export default function Paginator({
   }, [numPages, currentPage]);
 
   const pagesToShow = useMemo(() => {
+    let pages: number[] = [];
     if (currentPageAbs < 3) {
-      return [0, 1, 2, 3, 4, 5];
-    }
-    if (currentPageAbs > numPages - 3) {
-      return [
+      pages = [0, 1, 2, 3, 4, 5];
+    } else if (currentPageAbs > numPages - 3) {
+      pages = [
         currentPageAbs - 4,
         currentPageAbs - 3,
         currentPageAbs - 2,
         currentPageAbs - 1,
         currentPageAbs,
       ];
+    } else {
+      pages = [
+        currentPageAbs - 2,
+        currentPageAbs - 1,
+        currentPageAbs,
+        currentPageAbs + 1,
+        currentPageAbs + 2,
+      ];
     }
-    return [
-      currentPageAbs - 2,
-      currentPageAbs - 1,
-      currentPageAbs,
-      currentPageAbs + 1,
-      currentPageAbs + 2,
-    ];
+    return pages.filter((p) => p < numPages);
   }, [currentPageAbs, numPages]);
 
   return (
-    <div {...props}>
+    <div
+      {...props}
+      className={clsx("inline-flex items-center gap-2", props.className)}
+    >
       <button
+        className="disabled:cursor-default disabled:text-gray-100"
         disabled={currentPageAbs === 0}
         onClick={() => onPageClick(currentPageAbs - 1)}
       >
-        <IoChevronBackSharp />
+        <IoChevronBackSharp size={20} />
       </button>
 
       {pagesToShow.map((p) => (
-        <button onClick={() => onPageClick(p)}>{p + 1}</button>
+        <button
+          className={clsx(
+            "disabled:cursor-default",
+            currentPageAbs === p && "text-blue-500"
+          )}
+          disabled={currentPageAbs === p}
+          key={p}
+          onClick={() => onPageClick(p)}
+        >
+          {p + 1}
+        </button>
       ))}
 
       <button
+        className="disabled:cursor-default disabled:text-gray-100"
         disabled={currentPageAbs === numPages - 1}
         onClick={() => onPageClick(currentPageAbs + 1)}
       >
-        <IoChevronForwardSharp />
+        <IoChevronForwardSharp size={20} />
       </button>
     </div>
   );

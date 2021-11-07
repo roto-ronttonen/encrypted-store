@@ -8,6 +8,7 @@ import {
   Card,
   ContentContainer,
   FileUploader,
+  Loader,
   Paginator,
 } from "../components/___tiny";
 import { fileToBytes } from "../utils/bytes";
@@ -21,7 +22,7 @@ const Files: NextPage = () => {
   const router = useRouter();
 
   const [page, setPage] = useState(0);
-  const pageSize = 25;
+  const pageSize = 50;
 
   const skip = useMemo(() => {
     return page * pageSize;
@@ -44,46 +45,24 @@ const Files: NextPage = () => {
   useRequireLogin();
 
   return (
-    <main className="w-screen h-screen flex items-center justify-center">
-      <button
-        className="absolute top-2 right-2 p-4"
-        onClick={() => {
-          clearKey();
-          router.push("/");
-        }}
-      >
-        <IoLogOutOutline size={20} />
-      </button>
-      <ContentContainer className="w-screen h-screen flex flex-col">
-        <div className="flex flex-wrap flex-grow">
-          {data?.data.map((f) => (
-            <Card key={f} className="h-32 w-32">
-              <ContentContainer className="flex flex-col">
-                <h4>{f}</h4>
-                <Button
-                  onClick={async () => {
-                    if (!keyHashHex || !key) {
-                      return;
-                    }
-                    const res = await fetch(`/api/files/${f}`, {
-                      headers: { Identifier: keyHashHex },
-                    });
-                    const data = await res.arrayBuffer();
-                    const decrypted = await decryptData(data, key);
-                    const b = new Blob([decrypted]);
-                    downloadBlob(f, b);
-                  }}
-                >
-                  Download
-                </Button>
-              </ContentContainer>
-            </Card>
-          ))}
-        </div>
-        <div className="flex justify-between">
+    <main className="flex flex-col min-w-0 items-center justify-center">
+      <div className="w-full min-w-0 border-b flex justify-end items-center border-solid border-gray-300 p-4 fixed top-0 left-0 right-0 z-20 bg-white">
+        <button
+          onClick={() => {
+            clearKey();
+            router.push("/");
+          }}
+        >
+          <IoLogOutOutline size={20} />
+        </button>
+      </div>
+
+      <ContentContainer className="flex min-w-0 w-full flex-col gap-6 mt-14">
+        <h1 className="text-2xl">Files</h1>
+        <div className="inline-flex">
           <FileUploader
             input={{ multiple: true }}
-            defaultText="Drag and drop files to upload them"
+            defaultText="Upload a file"
             dragActiveText="Drop you file here"
             onDrop={async (files) => {
               if (!key || !keyHashHex) {
@@ -104,14 +83,50 @@ const Files: NextPage = () => {
               queryClient.invalidateQueries("filenames");
             }}
           />
-          {data && (
-            <Paginator
-              currentPage={page}
-              numPages={Math.ceil(data.totalCount / pageSize)}
-              onPageClick={(p) => setPage(p)}
-            />
-          )}
         </div>
+        {isLoading ? (
+          <div className="flex flex-grow items-center justify-center">
+            <Loader />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-6 justify-between flex-grow pb-8">
+            {data && (
+              <>
+                <div className="flex flex-wrap gap-4">
+                  {data?.data.map((f) => (
+                    <Card key={f} className="inline-flex max-w-[100%]">
+                      <button
+                        className="w-full"
+                        onClick={async () => {
+                          if (!keyHashHex || !key) {
+                            return;
+                          }
+                          const res = await fetch(`/api/files/${f}`, {
+                            headers: { Identifier: keyHashHex },
+                          });
+                          const data = await res.arrayBuffer();
+                          const decrypted = await decryptData(data, key);
+                          const b = new Blob([decrypted]);
+                          downloadBlob(f, b);
+                        }}
+                      >
+                        <ContentContainer className="flex flex-col justify-between h-full w-full">
+                          <h4 className="break-words w-full">{f}</h4>
+                        </ContentContainer>
+                      </button>
+                    </Card>
+                  ))}
+                </div>
+                <Paginator
+                  className="fixed right-4 bottom-4 z-20 shadow rounded p-1 bg-white"
+                  currentPage={page}
+                  numPages={Math.ceil(data.totalCount / pageSize)}
+                  onPageClick={(p) => setPage(p)}
+                />
+              </>
+            )}
+          </div>
+        )}
       </ContentContainer>
     </main>
   );

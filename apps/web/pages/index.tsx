@@ -53,6 +53,7 @@ const Home: NextPage = () => {
                 </GridColumn>
                 <GridColumn className="flex justify-center">
                   <FileUploader
+                    root={{ className: "!w-64" }}
                     onDrop={async (files) => {
                       const file = files[0];
                       const b = await fileToBytes(file);
