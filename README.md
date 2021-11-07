@@ -1,3 +1,9 @@
+# About
+
+This app encrypts files and stores them in the server. The files can only be decrypted with the users secret key. The server identifies the files owners by the sha512 of the secret key. Filenames are not encrypted.
+
+All the encryption and decryption happens on the client so the server has no way to verify if the data is properly encrypted. So using the api without the client is a stupid idea, because the api will accept unencrypted bytes. The only check about the identifier is that it is 128 characters long. But any 128 character long string can be used as an identifier. Again using arbitary identifiers to store arbitary bytes is possible, but you will only hurt yourself if you do that.
+
 ## Requirements
 
 - Unix system (if on windows sh scripts wont work, but they aren't very complex doe)
