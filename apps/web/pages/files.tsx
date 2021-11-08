@@ -15,8 +15,11 @@ import { fileToBytes } from "../utils/bytes";
 import { decryptData, encryptData } from "../utils/crypto";
 import { downloadBlob } from "../utils/html";
 import { IoLogOutOutline } from "react-icons/io5";
+import Head from "next/head";
+import { useApiClient } from "../components/providers/ApiClientProvider";
 
 const Files: NextPage = () => {
+  const apiClient = useApiClient();
   const queryClient = useQueryClient();
   const { clearKey, key, keyHashHex } = useKey();
   const router = useRouter();
@@ -31,13 +34,10 @@ const Files: NextPage = () => {
   const { data, isLoading, error } = useQuery<ApiResources.FilesResponse>(
     ["filenames", skip, pageSize],
     async () => {
-      const res = await fetch(`/api/files?skip=${skip}&take=${pageSize}`, {
-        headers: { Identifier: keyHashHex as string },
-      });
-      return res.json();
+      return apiClient?.listFiles(skip, pageSize);
     },
     {
-      enabled: !!keyHashHex,
+      enabled: !!keyHashHex && !!apiClient,
       refetchInterval: 1000,
     }
   );
@@ -46,6 +46,9 @@ const Files: NextPage = () => {
 
   return (
     <main className="flex flex-col min-w-0 items-center justify-center">
+      <Head>
+        <title>Encrypted store | Files</title>
+      </Head>
       <div className="w-full min-w-0 border-b flex justify-end items-center border-solid border-gray-300 p-4 fixed top-0 left-0 right-0 z-20 bg-white">
         <button
           onClick={() => {
@@ -65,20 +68,13 @@ const Files: NextPage = () => {
             defaultText="Upload files"
             dragActiveText="Drop you files here"
             onDrop={async (files) => {
-              if (!key || !keyHashHex) {
+              if (!key || !keyHashHex || !apiClient) {
                 return;
               }
               for (const file of files) {
                 const bytes = await fileToBytes(file);
                 const encrypted = await encryptData(bytes, key);
-                await fetch("/api/files/" + file.name, {
-                  method: "POST",
-                  body: encrypted,
-                  headers: {
-                    "Content-Type": "application/octet-stream",
-                    Identifier: keyHashHex,
-                  },
-                });
+                await apiClient.uploadFile(file.name, encrypted);
               }
               queryClient.invalidateQueries("filenames");
             }}

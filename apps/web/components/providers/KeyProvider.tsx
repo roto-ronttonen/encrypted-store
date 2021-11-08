@@ -45,12 +45,15 @@ export function KeyProvider({ children }: KeyProvideProps) {
 
   const setKey = async (rawKey: string) => {
     if (!creatingKey) {
-      setCreatingKey(true);
-      const key = await rawToCryptoKey(rawKey);
-      _setKey(key);
-      const hex = await digestMessage(rawKey);
-      setKeyHashHex(hex);
-      setCreatingKey(false);
+      try {
+        setCreatingKey(true);
+        const key = await rawToCryptoKey(rawKey);
+        _setKey(key);
+        const hex = await digestMessage(rawKey);
+        setKeyHashHex(hex);
+      } finally {
+        setCreatingKey(false);
+      }
     }
   };
 

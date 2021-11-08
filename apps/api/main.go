@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -19,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	r.Use(middleware.Logger)
 	// cors
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -103,5 +105,5 @@ func main() {
 		w.Write(data)
 	})
 
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(":5000", r)
 }

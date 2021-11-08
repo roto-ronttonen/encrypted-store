@@ -7,7 +7,7 @@ services:
     volumes:
       - ./data:/app/data
     expose:
-      - 3000
+      - 5000
     command: ["/app/out"]
 
   web:

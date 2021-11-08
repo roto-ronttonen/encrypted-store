@@ -1,0 +1,23 @@
+{
+  "name": "encrypted-file-storage",
+  "version": "1.0.0",
+  "description": "- Unix system (if on windows sh scripts wont work, but they aren't very complex doe) - Docker",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \" cd ./dev-scripts && ./start-api.dev.sh\" \" cd ./dev-scripts && ./start-web.dev.sh\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/roto-ronttonen/encrypted-store.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/roto-ronttonen/encrypted-store/issues"
+  },
+  "homepage": "https://github.com/roto-ronttonen/encrypted-store#readme",
+  "devDependencies": {
+    "concurrently": "^6.3.0"
+  }
+}

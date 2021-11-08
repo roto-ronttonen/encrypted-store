@@ -9,6 +9,6 @@ COPY . .
 
 RUN go build -o out
 
-EXPOSE 3000
+EXPOSE 5000
 
 CMD ["/app/out"]
