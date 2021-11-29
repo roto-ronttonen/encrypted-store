@@ -8,6 +8,7 @@ All the encryption and decryption happens on the client so the server has no way
 
 - Unix system (if on windows sh scripts wont work, but they aren't very complex doe)
 - Docker
+- Docker compose
 
 ## TLDR
 
