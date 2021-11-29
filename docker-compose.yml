@@ -4,6 +4,9 @@ services:
   api:
     image: encrypted-file-storage-api
     restart: always
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile
     volumes:
       - ./data:/app/data
     expose:
@@ -13,6 +16,9 @@ services:
   web:
     image: encrypted-file-storage-web
     restart: always
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
     expose:
       - 3000
     command: ["npm", "run", "start"]

@@ -1,1 +1,1 @@
-docker swarm leave --force
+docker-compose -f docker-compose.yml down
